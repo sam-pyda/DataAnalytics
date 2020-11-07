@@ -1,4 +1,10 @@
 # DataAnalytics
+Spark Foundation (NOV20)
+
+Objective :Predicting the percentage scores of students on the number of study hours using supervised ML.
+Tool used: Python(Jupyter Notebook)
+
+Code:
 ### IMPORTING ALL LIBRARIES REQUIRED
 
 import pandas as pd
