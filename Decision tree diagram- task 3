@@ -1,0 +1,105 @@
+# SPARK FOUNDATION(GRIPNOV20)
+
+## INTERN: STEPHEN,SAMUEL OCHOGBE
+
+### TASK : CREATING A DECISION TREE CLASSIFIER AND VISUALIZING IT GRAPHICALLY
+
+import pandas as pd
+import sklearn.datasets as datasets
+import seaborn as sns
+%matplotblib inline
+
+iris= pd.read_csv('Iris.csv')
+iris
+
+#forming an Iris DataFrame
+iris = datasets.load_iris()
+df = pd.DataFrame(iris.data, columns = iris.feature_names)
+df.head(10)
+
+
+y=iris.target
+print(y)
+
+iris.target_names
+
+iris.data.shape
+
+#Defining the Targets by visualizing scatterd points
+from sklearn.datasets import load_iris
+iris = load_iris()
+
+from matplotlib import pyplot as plt
+
+# The indices of the features that we are plotting
+x_index = 0
+y_index = 1
+
+# this formatter will label the colorbar with the correct target names
+formatter = plt.FuncFormatter(lambda i, *args: iris.target_names[int(i)])
+
+plt.figure(figsize=(10, 4))
+plt.scatter(iris.data[:, x_index], iris.data[:, y_index], c=iris.target)
+plt.colorbar(ticks=[0, 1, 2], format=formatter)
+plt.xlabel(iris.feature_names[x_index])
+plt.ylabel(iris.feature_names[y_index])
+
+plt.tight_layout()
+plt.show()
+
+#### This also helps in checking the relationship between sepal length and width
+
+##### SPLITTING OUR DATA TO TEST AND TRAIN DATA
+
+
+from sklearn.model_selection import train_test_split
+
+
+
+from sklearn.tree import DecisionTreeClassifier
+from sklearn import tree
+
+dtree= DecisionTreeClassifier(random_state =1234)
+dtree.fit(df,y)
+print('decision tree classifier created')
+
+
+
+
+X_train, X_test, y_train, y_test = train_test_split(df[iris.feature_names],y ,test_size=0.20, random_state=1234)
+
+#training data
+dtree.fit(X_train, y_train)
+
+#### Predicting & Accuracy of Test Data
+
+#predicting label of unseen data
+dtree.predict(X_test.iloc[2].values.reshape(1,-1))
+
+#predicting multiple observation
+dtree.predict(X_test[0:20])
+
+#showing the accuracy
+
+score = dtree.score(X_test, y_test)
+print(score)
+
+#### using the score method we see that test prediction gives a 100 percent, showing the reliability of this algorithm
+
+from sklearn.model_selection import cross_val_score
+accuracy_scores = cross_val_score(dtree,df,y, cv=4)
+accuracy_scores
+
+#### here, i used the cross_value_ score method to confirm the accurracy of a test data predicted
+
+accuracy_scores.mean()
+
+#### Plotting the Decision tree Diagram
+
+fig = plt.figure(figsize=(30,25))
+DT = tree.plot_tree(dtree, feature_names = iris.feature_names,
+                    class_names = iris.target_names,
+                    filled=True, rounded = True)
+
+
+### conclusion: Above is the Iris Decision tree Diagram displaying the the classification of the datasets with a better and easier way to understand the algorithm. My prediction for 25% test data was 96.7%,showing us how reliable this algorithm are for unseen test data
