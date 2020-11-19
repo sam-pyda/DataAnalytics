@@ -1,0 +1,191 @@
+#              SPARK FOUNDATION(GRIPNOV20)
+
+## INTERN: STEPHEN,SAMUEL OCHOGBE
+
+### TASK : PERFORMING EXPLORATORY ANALYSIS ON DATASETS 'SUPER STORE'
+
+
+import pandas as pd
+import numpy  as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+%matplotlib inline
+
+store_data = pd.read_csv(r'C:/Users/Samuel/Downloads/SampleSuperstore.csv')
+store_data.head()
+
+store_data.shape
+
+store_data.tail()
+
+store_data.info()
+
+store_data.columns
+
+
+store_data.dtypes
+
+store_data.describe()
+
+store_data.duplicated().sum()
+
+store_data.drop_duplicates()
+
+store_data.drop_duplicates(subset=['Ship Mode','Profit'])
+
+store_data.nunique()
+
+corr= store_data.corr()
+corr
+
+#visualising the correleation matrix
+corr.style.background_gradient(cmap='coolwarm')
+
+plt.rcParams['figure.figsize']=(7,6)
+
+
+
+sns.heatmap(corr,cmap='Blues',annot= True)
+
+#visualizing Category column
+store_data['Category'].unique()
+
+store_data['Category'].value_counts()
+
+
+sns.countplot(store_data['Category'])
+plt.title('Superstore Categories Count')
+
+##### This barchart shows that Superstore has more office supplies than technology and furniture
+
+#### visualizing Sub-Category
+
+store_data['Sub-Category'].unique()
+
+fig = plt.figure(figsize=(15,8))
+s=sns.countplot(store_data['Sub-Category'])
+plt.grid(color='gray',linestyle = '--',linewidth = 0.3)
+plt.title('Sub-Category Count', fontsize=15)
+plt.show()
+
+plt.figure(figsize=(15,8))
+theme = plt.get_cmap('hsv')
+store_data_cat= store_data['Sub-Category'].value_counts()
+store_data_cat.plot.pie(autopct='%1.1f%%', shadow=True,explode=(0.1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0))
+plt.title('Sub-Category Product')
+
+#### this graph shows a high percentage in Paper and Binders in the sub-category
+### Visualizing Sub-Category with respect to Category
+
+fig = plt.figure(figsize=(10,5))
+plt.barh('Sub-Category','Category',data= store_data, color= 'purple')
+plt.grid(color='gray',linestyle = '--',linewidth = 0.3)
+plt.title('Sub-Category vs Category', fontsize=15)
+plt.ylabel('sub-category')
+plt.xlabel('category')
+plt.show()
+
+
+#### visualizing sum of sales and profit per sub-category
+
+sum_sales_profit = store_data.groupby(['Sub-Category'])['Sales','Profit'].sum()
+sum_sales_profit.plot.bar(width=0.3, figsize=(14,6))
+plt.ylabel('sales and profit count')
+plt.xlabel('sub-category')
+plt.title('Total sales and profit in Sub-Category')
+plt.grid(color='black',linewidth=0.2,linestyle='--')
+plt.show()
+
+
+Phones and chairs has the highest number of sales but phone has the highest profit. Bookcases and Tables makes loses at their selling, this is because people dont often buy them in the store.
+
+#### Visualizing how much data is distributed in regions per sub-category
+
+plt.figure(figsize=(15,8))
+sns.countplot(data=store_data, x= 'Sub-Category', hue='Region')
+
+plt.title('count of sub-category distributed regionwise')
+plt.grid(color='black',linewidth=0.5,linestyle='--')
+
+people in the west order more from superstore
+
+### visualizing cost
+
+Adding a new column called cost 
+cost = sales - profit
+
+store_data['Cost']= store_data['Sales']-store_data['Profit']
+store_data.head()
+
+#costs using sub-category
+cost = store_data.groupby(['Sub-Category'])['Cost'].sum()
+cost.plot.bar(width=0.3, figsize=(14,6))
+plt.ylabel('sum of cost')
+plt.xlabel('sub-category')
+plt.title('Total cost per Sub-Category')
+plt.grid(color='black',linewidth=0.2,linestyle='--')
+plt.show()
+
+Highehest cost are spent on chairs an lowest cost spent on fasteners
+
+### VISUALIZING PROFIT PER SUB CATEGORY
+
+store_data['Profit %'] =(store_data['Profit']/store_data['Cost'])*100
+store_data.iloc[[0,1,2,3,4],[8,14]]
+
+
+
+#### visualizing sub-category by profit  %
+
+store_data.sort_values(['Profit %', 'Sub-Category'],ascending=False).groupby('Profit %').head(10)
+
+#### Sales for phones and Paper makes 100 percent profit
+
+#visualizing State count
+plt.figure(figsize=(15,9))
+sns.countplot(x=store_data['State'])
+plt.xticks(rotation=90)
+plt.title('State count')
+plt.grid(color='black',linewidth=0.2,linestyle='--')
+plt.show()
+
+### we have highest number of buyers from califonia
+
+### visualizing city count
+
+city= store_data['City'].value_counts()
+
+plt.figure(figsize=(15,7))
+city.plot(kind='line',)
+plt.xticks(rotation=90)
+plt.title('City count')
+plt.grid(color='gray',linewidth=0.2,linestyle='--')
+plt.show()
+
+#### High number of retailers came from New york City
+
+state = store_data.groupby(['City','State']).size().reset_index(name= 'no of orders')
+state.head()
+
+plt.figure(figsize=(15,7))
+state.plot(kind='line')
+plt.xlabel('City')
+plt.ylabel('count')
+plt.title('no of order (state and city)')
+plt.grid(color='gray',linewidth=0.2,linestyle='--')
+plt.show()
+
+state_max= state.max()
+state_max
+
+#### calculating percentaga profit for segement and statewise by sub-category
+
+plt.figure(figsize=(20,8))
+sns.barplot('Segment','Profit %', hue='Sub-Category',palette='Paired', data=store_data)
+
+plt.title('percentage profit in segments by sub-category')
+plt.grid(color='black',linewidth=1.0,linestyle='--')
+
+
+
+#### This shows that profit is made in bookcases,paper and labels in each segment
